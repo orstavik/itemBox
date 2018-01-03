@@ -1,0 +1,50 @@
+<link rel="import" href="shape-box.html">
+
+<dom-module id="ui-plain">
+  <template>
+    <style>
+      :host {
+				height: 100%;
+      }
+    </style>
+
+		<shape-box id="shapeBox"></shape-box>
+		<slot></slot>
+
+  </template>
+
+  <script>
+
+    class UiPlain extends Polymer.Element {
+      static get is() {
+        return "ui-plain";
+      }
+
+      static get properties() {
+        return {
+					shapesRegistry: {
+						type: Object,
+						value: function() {
+							return {}
+						}
+					}
+				}
+      }
+
+			constructor() {
+				super();
+				this.addEventListener("shape-location", this._shapeLocation.bind(this));
+			}
+
+			_shapeLocation(e) {
+				if (e.detail.selected) {
+					this.set("shapesRegistry."+e.detail.id, e.detail);
+				} else {
+					delete this.shapesRegistry[e.detail.id];
+				}
+				this.$.shapeBox.newShapes(this.shapesRegistry);
+			}
+    }
+    customElements.define(UiPlain.is, UiPlain);
+  </script>
+</dom-module>

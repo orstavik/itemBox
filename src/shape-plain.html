@@ -1,0 +1,68 @@
+<link rel="import" href="shape-object.html">
+
+<dom-module id="shape-plain">
+  <template>
+    <style>
+      :host {
+        display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+      }
+    </style>
+
+		<template is="dom-repeat" items="[0,1,2,3,4,5,6,7,8,9]">
+			<shape-object id$="shape[[item]]" on-new-selection="_newSelection"></shape-object>
+		</template>
+
+  </template>
+
+  <script>
+
+    class ShapePlain extends Polymer.Element {
+      static get is() {
+        return "shape-plain";
+      }
+
+      static get properties() {
+        return {
+          shift: {
+            type: Boolean,
+            value: false
+          }
+        }
+      }
+
+      constructor() {
+        super();
+        window.addEventListener("keydown", function(e) {
+          if (e.key === "Shift")
+            this.shift = true;
+        }.bind(this))
+        window.addEventListener("keyup", function(e) {
+          if (e.key === "Shift")
+            this.shift = false;
+        }.bind(this))
+      }
+
+      changeShapes(shapes) {
+        for (let key in shapes) {
+          let shape = shapes[key];
+          let node = this.shadowRoot.querySelector("#"+key);
+          node.update(shape.matrix);
+        }
+      }
+
+      _newSelection(e) {
+        if (!this.shift) {
+          let selected = this.shadowRoot.querySelectorAll("[selected]");
+          if (selected)
+            for (let i = 0; i<selected.length; i++)
+              selected[i].selected = false;
+        }
+        e.target.selected = true;
+      }
+    }
+    customElements.define(ShapePlain.is, ShapePlain);
+  </script>
+</dom-module>
